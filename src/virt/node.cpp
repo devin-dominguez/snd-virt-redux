@@ -8,12 +8,13 @@ void Node::create(ofPoint position) {
 }
 
 Node::Node(ofPoint position) : Entity(position) {
-
   size = 24.0;
   fadeInTime = 1.0;
   fadeOutTime = 1.0;
   type = NODE;
   color = Entity::colors[2];
+
+  pulseNode.setup(position, size);
 }
 
 void Node::update(double dt) {
@@ -39,6 +40,7 @@ void Node::collideWith(Entity* entity) {
       switch( ((Pulse*)entity)->pulseType) {
         case Pulse::ORIGIN:
           rocketNode.collideWith(entity);
+          pulseNode.collideWith(entity);
           break;
         case Pulse::DEFAULT:
           blimpNode.collideWith(entity);

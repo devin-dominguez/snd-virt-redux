@@ -1,4 +1,5 @@
 #include "pulse_node.h"
+#include "pulse.h"
 PulseNode::PulseNode() {
   coolDownTime = 6.0;
   coolDown = 0.0;
@@ -6,7 +7,7 @@ PulseNode::PulseNode() {
   collided = false;
   ready = false;
 
-  color = Entity::colors[2];
+  color = Entity::colors[3];
 
   maxSize = 42.0;
   size = 0.0;
@@ -15,6 +16,11 @@ PulseNode::PulseNode() {
   rotation = 0.0;
   spinnerResolution = 6;
   lerpRate = 5.0;
+}
+
+void PulseNode::setup(ofPoint nodePosition, double nodeSize) {
+  this->nodePosition = nodePosition;
+  this->nodeSize = nodeSize;
 }
 
 void PulseNode::action(double dt) {
@@ -45,6 +51,7 @@ void PulseNode::collisionAction() {
     collided = colliding;
     if (collided && ready) {
       coolDown = coolDownTime;
+      Pulse::create(nodePosition, nodeSize, Pulse::DEFAULT);
       // spawn pulse
       cout << "PULSE!" << endl;
     }

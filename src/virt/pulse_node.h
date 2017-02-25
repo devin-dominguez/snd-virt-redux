@@ -7,11 +7,14 @@
 class PulseNode {
   public:
     PulseNode();
+    void setup(ofPoint nodePosition, double nodeSize);
     void action(double dt);
     void collideWith(Entity* entity);
     void draw(double fadeLevel);
 
   private:
+    ofPoint nodePosition;
+    double nodeSize;
     void cooling(double dt);
     void collisionAction();
     ofFloatColor color;

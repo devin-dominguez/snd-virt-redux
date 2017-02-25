@@ -8,20 +8,21 @@ void Pulsar::create(ofPoint position) {
 }
 
 Pulsar::Pulsar(ofPoint position) : Entity(position) {
-  size = 20.0;
-  color = Entity::colors[0];
+  size = 18.0;
+  color = Entity::colors[1];
   type = PULSAR;
 
   phasor = 0.0;
   minFrequency = 1.0 / 12.0;
   maxFrequency = 1.0 / 4.0;
 
-  criticalRange = 0.25;
+  decayRange = 0.25;
+  decayFactor = 0.0075;
 
-  freqScale = ofVec2f(64, 79);
-  ampScale = ofVec2f(2, 3);
-  wobbleFreq = ofVec2f(0.0, 0.0);
-  wobbleAmp = ofVec2f(0.0, 0.0);
+  freqScale = ofVec2f(27, 31);
+  ampScale = ofVec2f(4, 6);
+  wobbleFreq = 0.0;
+  wobbleAmp = 0.0;
   wobbleOffset = ofVec2f(0.0, 0.0);
 }
 
@@ -49,47 +50,50 @@ void Pulsar::action(double dt) {
     phasor += dt * frequency;
   } else {
     phasor -= 1.0;
-    // TODO trigger action
-    cout << "PULSE!" << endl;
+    Pulse::create(position, 20, Pulse::ORIGIN);
   }
 
   wobble(dt);
 }
 
 void Pulsar::wobble(double dt) {
-  if (phasor > criticalRange) {
-    // normalize phasor outside of critical range
-    double nPhase = (phasor - criticalRange) / (1.0 - criticalRange);
-    // change curve and apply to freq and amp
+  double nPhase = 0.0;
+  if (phasor > decayRange) {
+    nPhase = (phasor - decayRange) / (1.0 - decayRange);
     nPhase *= nPhase;
-    wobbleFreq = nPhase * freqScale;
-    wobbleAmp = nPhase * ampScale;
-
-  } else {
-    // linear fade when in critical range
-    wobbleAmp -= ofVec2f(3.0 * dt, 3.0 * dt);
-    wobbleAmp.x = fmax(0.0, wobbleAmp.x);
-    wobbleAmp.y = fmax(0.0, wobbleAmp.y);
   }
+  double decay = 1.0 - decayFactor;
+  wobbleFreq = fmax(nPhase, wobbleFreq * decay);
+  wobbleAmp = fmax(nPhase, wobbleAmp * decay);
 
-	wobbleOffset.x = wobbleAmp.x * cos(phase * M_PI * 2 * wobbleFreq.x);
-	wobbleOffset.y = wobbleAmp.y * sin(phase * M_PI * 2 * wobbleFreq.y);
+	wobbleOffset.x = cos(phasor * M_PI * 2 * freqScale.x * wobbleFreq);
+	wobbleOffset.y = sin(phasor * M_PI * 2 * freqScale.y * wobbleFreq);
+  wobbleOffset *= wobbleAmp * ampScale;
 }
 
 void Pulsar::draw() {
-  ofPoint screenPosition = Projector::getCoords(position);
+  ofPoint screenPosition = Projector::getCoords(position + wobbleOffset);
   double screenSize = Projector::getScale(size);
-  ofVec2f screenWobble = Projector::getCoords(wobbleOffset);
+  double pulseScreenSize = Projector::getScale(size * 0.75 * phasor * phasor);
 
   ofPushMatrix();
     ofTranslate(screenPosition);
     ofPushStyle();
       ofEnableAlphaBlending();
+      ofFill();
+      // base
       ofSetColor(color, 255.0 * fadeLevel);
-      ofDrawCircle(screenWobble, screenSize);
+      ofDrawCircle(0, 0, screenSize);
+      // masking
       ofSetColor(Entity::colors[0], 255.0 * fadeLevel);
-      ofDrawCircle(screenWobble, 0.75 * screenSize);
+      ofDrawCircle(0, 0, 0.75 * screenSize);
+      // inner wave
+      ofSetColor(color, 255.0 * fadeLevel * phasor );
+      ofDrawCircle(0, 0, pulseScreenSize);
+      // inner masking
+      ofSetColor(Entity::colors[0], 255.0 * fadeLevel);
+      ofDrawCircle(0, 0, pulseScreenSize - 2.0);
+
     ofPopStyle();
   ofPopMatrix();
-
 }

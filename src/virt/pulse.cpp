@@ -33,9 +33,9 @@ Pulse::Pulse(
       break;
     case ORIGIN:
       color = Entity::colors[1];
-      growthRate = 140.0;
+      growthRate = 180.0;
       fadeInTime = 0.1;
-      decayRate = 20.0;
+      decayRate = 40.0;
       break;
   }
 }

@@ -32,19 +32,21 @@ class Pulsar : public Entity {
 
     ofFloatColor color;
 
-    double timeElapsed;
     double minInterval;
     double maxInterval;
-    double criticalRange;
-    double phasor;
+    double decayRange;
+    double decayFactor;
     double minFrequency;
     double maxFrequency;
+
+    double timeElapsed;
+    double phasor;
 
     ofVec2f freqScale;
     ofVec2f ampScale;
 
-    ofVec2f wobbleFreq;
-    ofVec2f wobbleAmp;
+    double wobbleFreq;
+    double wobbleAmp;
     ofVec2f wobbleOffset;
 
 
