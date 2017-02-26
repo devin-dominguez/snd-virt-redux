@@ -2,19 +2,21 @@
 
 #include "ofMain.h"
 #include "entity.h"
-#include "projector.h"
 
 class BlimpNode {
   public:
     BlimpNode();
+    void setup(ofPoint nodePosition, double nodeSize);
     void action(double dt);
     void collideWith(Entity* entity);
     void draw(double fadeLevel);
 
   private:
+    ofPoint nodePosition;
+    double nodeSize;
     void cooling(double dt);
     void collisionAction();
-    ofFloatColor color;
+    ofColor color;
     double coolDownTime;
     double coolDown;
 

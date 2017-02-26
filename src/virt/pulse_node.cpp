@@ -1,5 +1,7 @@
 #include "pulse_node.h"
 #include "pulse.h"
+#include "projector.h"
+
 PulseNode::PulseNode() {
   coolDownTime = 6.0;
   coolDown = 0.0;
@@ -51,9 +53,8 @@ void PulseNode::collisionAction() {
     collided = colliding;
     if (collided && ready) {
       coolDown = coolDownTime;
-      Pulse::create(nodePosition, nodeSize, Pulse::DEFAULT);
       // spawn pulse
-      cout << "PULSE!" << endl;
+      Pulse::create(nodePosition, nodeSize, Pulse::DEFAULT);
     }
   }
 

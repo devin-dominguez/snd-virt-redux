@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "entity.h"
-#include "projector.h"
 
 class PulseNode {
   public:
@@ -11,6 +10,7 @@ class PulseNode {
     void action(double dt);
     void collideWith(Entity* entity);
     void draw(double fadeLevel);
+    bool ready;
 
   private:
     ofPoint nodePosition;
@@ -23,7 +23,6 @@ class PulseNode {
 
     bool colliding;
     bool collided;
-    bool ready;
 
     double maxSize;
     double size;

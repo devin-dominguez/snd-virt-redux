@@ -46,7 +46,7 @@ class Entity {
     bool isDead();
     bool isCollidable();
 
-    static ofFloatColor colors[4];
+    static ofFloatColor colors[5];
   protected:
     ////////////////////////////
     // PROPERTIES //////////////
@@ -79,8 +79,4 @@ class Entity {
       DYING,
       DEAD
     } phase;
-
-    ////////////////////////////
-    // COLOR TABLE /////////////
-    ////////////////////////////
 };

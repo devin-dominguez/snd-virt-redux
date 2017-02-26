@@ -1,6 +1,7 @@
 #include "pulsar.h"
 #include "projector.h"
 #include "pulse.h"
+#include "fake_height.h"
 
 vector<Pulsar> Pulsar::collection;
 void Pulsar::create(ofPoint position) {
@@ -17,7 +18,8 @@ Pulsar::Pulsar(ofPoint position) : Entity(position) {
   maxFrequency = 1.0 / 4.0;
 
   decayRange = 0.25;
-  decayFactor = 0.0075;
+  minDecayRate = 0.25;
+  decayRate = minDecayRate;
 
   freqScale = ofVec2f(27, 31);
   ampScale = ofVec2f(4, 6);
@@ -43,12 +45,22 @@ void Pulsar::update(double dt) {
 }
 
 void Pulsar::action(double dt) {
-  double height = 1.0; // TODO
+  // get average depth at location
+  double height = 0.0;
+  for (size_t x = 0; x < size; x++) {
+    for (size_t y = 0; y < size; y++) {
+      ofPoint offset(x - size * 0.5, y - size * 0.5);
+      height += FakeHeight::getHeightAt(offset + position);
+    }
+  }
+  height /= size * size;
+
   double frequency = ofLerp(minFrequency, maxFrequency, height);
 
   if (phasor < 1.0) {
     phasor += dt * frequency;
   } else {
+    decayRate = minDecayRate;
     phasor -= 1.0;
     Pulse::create(position, 20, Pulse::ORIGIN);
   }
@@ -62,9 +74,9 @@ void Pulsar::wobble(double dt) {
     nPhase = (phasor - decayRange) / (1.0 - decayRange);
     nPhase *= nPhase;
   }
-  double decay = 1.0 - decayFactor;
-  wobbleFreq = fmax(nPhase, wobbleFreq * decay);
-  wobbleAmp = fmax(nPhase, wobbleAmp * decay);
+  wobbleFreq = fmax(nPhase, wobbleFreq - decayRate * dt);
+  wobbleAmp = fmax(nPhase, wobbleAmp - decayRate * dt);
+  decayRate += 0.75 * dt;
 
 	wobbleOffset.x = cos(phasor * M_PI * 2 * freqScale.x * wobbleFreq);
 	wobbleOffset.y = sin(phasor * M_PI * 2 * freqScale.y * wobbleFreq);

@@ -2,9 +2,11 @@
 
 #include "virt/virt.h"
 #include "projector.h"
+#include "fake_height.h"
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+  FakeHeight::setup(640, 480);
   Virt::setup();
   ofSetWindowShape(ofGetScreenWidth(), ofGetScreenHeight());
   Projector::setWorldDimensions(640, 480);
@@ -19,8 +21,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-  ofBackground(32);
   Projector::startDraw();
+  FakeHeight::draw(640, 480);
   Virt::draw();
   Projector::endDraw();
 }

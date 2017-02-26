@@ -90,5 +90,7 @@ ofFloatColor Entity::colors[] = {
   ofFloatColor(0.0, 0.0, 0.0),
   ofFloatColor(1.0, 1.0, 1.0),
   ofFloatColor(1.0, 0.0, 0.0),
-  ofFloatColor(0.0, 1.0, 0.0)
+  ofFloatColor(0.0, 1.0, 0.0),
+  ofFloatColor(0.0, 0.0, 1.0)
+
 };

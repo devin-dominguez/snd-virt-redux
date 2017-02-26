@@ -1,4 +1,6 @@
 #include "rocket_node.h"
+#include "rocket.h"
+#include "projector.h"
 
 RocketNode::RocketNode() {
   coolDownTime = 3.0;
@@ -11,12 +13,17 @@ RocketNode::RocketNode() {
 
   numRockets = 9;
 
-  maxSize = 24.0;
+  maxSize = 10.0;
   size = 0.0;
   sizeTarget = 0.0;
   rotation = 0.0;
   rotationRate = 360.0 / -6.0;
-  lerpRate = 10.0;
+  lerpRate = 3.0;
+}
+
+void RocketNode::setup(ofPoint nodePosition, double nodeSize) {
+  this->nodePosition = nodePosition;
+  this->nodeSize = nodeSize;
 }
 
 void RocketNode::action(double dt) {
@@ -24,8 +31,11 @@ void RocketNode::action(double dt) {
   collisionAction();
   rotation += rotationRate * dt;
 
-  sizeTarget = ready ? maxSize : maxSize * 0.8;
-  size = ofLerp(size, sizeTarget, lerpRate * dt);
+  if (ready) {
+    size = ofLerp(size, maxSize, lerpRate * dt);
+  } else {
+    size = 0.0;
+  }
 }
 
 void RocketNode::collideWith(Entity* entity) {
@@ -48,7 +58,15 @@ void RocketNode::collisionAction() {
     if (collided && ready) {
       coolDown = coolDownTime;
       // spawn rockets
-      cout << "ROCKETS!" << endl;
+      for (size_t i = 0; i < numRockets; i++) {
+        double angle = (double)i / (double)numRockets;
+        angle += rotation / 360.0;
+        angle *= M_PI * 2;
+        ofPoint rocketPosition(cos(angle), sin(angle));
+        rocketPosition *= nodeSize;
+        rocketPosition += nodePosition;
+        Rocket::create(rocketPosition, angle);
+      }
     }
   }
 
@@ -57,7 +75,7 @@ void RocketNode::collisionAction() {
 
 void RocketNode::draw(double fadeLevel) {
   double screenSize = Projector::getScale(size);
-  double screenDistance = Projector::getScale(3.0);
+  double rocketScreenSize = Projector::getScale(size);
 
   ofPushStyle();
     ofEnableAlphaBlending();
@@ -67,10 +85,13 @@ void RocketNode::draw(double fadeLevel) {
       double angle = 360.0 * (double)i / (double)numRockets + rotation;
       ofPushMatrix();
       ofRotate(angle);
+      ofTranslate(nodeSize, 0);
         ofBeginShape();
-          ofVertex(screenSize * 1.5, 0);
-          ofVertex(0, -screenDistance);
-          ofVertex(0, screenDistance);
+          ofVertex(rocketScreenSize, 0);
+          ofVertex(-rocketScreenSize, rocketScreenSize / 2.0);
+          ofVertex(0, 0);
+          ofVertex(-rocketScreenSize, -rocketScreenSize / 2.0);
+          ofVertex(rocketScreenSize, 0);
         ofEndShape();
       ofPopMatrix();
     }

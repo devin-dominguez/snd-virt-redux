@@ -14,6 +14,7 @@ set(SOURCES
     src/main.cpp
     src/ofApp.cpp
     src/projector.cpp
+    src/fake_height.cpp
     src/virt/entity.cpp
     src/virt/pulsar.cpp
     src/virt/node.cpp
@@ -22,6 +23,9 @@ set(SOURCES
     src/virt/blimp_node.cpp
     src/virt/pulse.cpp
     src/virt/virt.cpp
+    src/virt/rocket.cpp
+    src/virt/depth_physics.cpp
+
 )
 
 include_directories(

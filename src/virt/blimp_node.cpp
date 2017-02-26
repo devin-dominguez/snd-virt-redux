@@ -1,4 +1,5 @@
 #include "blimp_node.h"
+#include "projector.h"
 
 BlimpNode::BlimpNode() {
   coolDownTime = 3.0;
@@ -11,12 +12,17 @@ BlimpNode::BlimpNode() {
 
   numBlimps = 3;
 
-  maxSize = 21.0;
+  maxSize = 10.0;
   size = 0.0;
   sizeTarget = 0.0;
   rotation = 0.0;
   rotationRate = 360.0 / -6.0;
-  lerpRate = 10.0;
+  lerpRate = 5.0;
+}
+
+void BlimpNode::setup(ofPoint nodePosition, double nodeSize) {
+  this->nodePosition = nodePosition;
+  this->nodeSize = nodeSize;
 }
 
 void BlimpNode::action(double dt) {
@@ -24,8 +30,11 @@ void BlimpNode::action(double dt) {
   collisionAction();
   rotation += rotationRate * dt;
 
-  sizeTarget = ready ? maxSize : maxSize * 0.8;
-  size = ofLerp(size, sizeTarget, lerpRate * dt);
+  if (ready) {
+    size = ofLerp(size, maxSize, lerpRate * dt);
+  } else {
+    size = 0.0;
+  }
 }
 
 void BlimpNode::collideWith(Entity* entity) {
@@ -55,17 +64,9 @@ void BlimpNode::collisionAction() {
   colliding = false;
 }
 
-		//for(unsigned int i = 0; i < particleBAmmount; i++) {
-			//double angle = 360.0 * (double)i / (double)particleBAmmount + rotation ;
-			//ofPushMatrix();
-				//ofRotate(angle);
-					//ofSetRectMode(OF_RECTMODE_CENTER);
-					//ofRectRounded(size, 0, ampB, size * .35, 10);
-				//ofPopMatrix();
-		//}
-
 void BlimpNode::draw(double fadeLevel) {
-  double screenSize = Projector::getScale(size);
+  double screenSize = Projector::getScale(nodeSize);
+  double blimpScreenSize = Projector::getScale(size);
 
   ofPushStyle();
     ofEnableAlphaBlending();
@@ -75,10 +76,9 @@ void BlimpNode::draw(double fadeLevel) {
       double angle = 360.0 * (double)i / (double)numBlimps + rotation;
       ofPushMatrix();
       ofRotate(angle);
-        ofBeginShape();
-					ofSetRectMode(OF_RECTMODE_CENTER);
-					ofDrawRectRounded(screenSize, 0, screenSize, screenSize * 0.35, 10.0);
-        ofEndShape();
+      ofTranslate(nodeSize * 0.75, 0);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+        ofDrawRectRounded(0, 0, blimpScreenSize * 2, blimpScreenSize, 10);
       ofPopMatrix();
     }
   ofPopStyle();

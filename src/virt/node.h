@@ -31,6 +31,8 @@ class Node : public Entity {
 
     void collideWith(Entity* entity);
 
+    bool pulseReady();
+
   protected:
     PulseNode pulseNode;
     RocketNode rocketNode;
@@ -42,14 +44,9 @@ class Node : public Entity {
 
     double blimpCoolDown;
     double blimpCoolDownTime;
-    bool blimpReady;
 
     double pulseCoolDown;
     double pulseCoolDownTime;
-    bool pulseReady;
-
-    bool rocketHit;
-    bool rocketHitting;
 
     bool originPulseHit;
     bool originPulseHitting;

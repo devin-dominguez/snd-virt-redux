@@ -35,7 +35,8 @@ class Pulsar : public Entity {
     double minInterval;
     double maxInterval;
     double decayRange;
-    double decayFactor;
+    double minDecayRate;
+    double decayRate;
     double minFrequency;
     double maxFrequency;
 

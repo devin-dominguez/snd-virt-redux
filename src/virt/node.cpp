@@ -12,9 +12,11 @@ Node::Node(ofPoint position) : Entity(position) {
   fadeInTime = 1.0;
   fadeOutTime = 1.0;
   type = NODE;
-  color = Entity::colors[2];
+  color = Entity::colors[4];
 
   pulseNode.setup(position, size);
+  rocketNode.setup(position, size);
+  blimpNode.setup(position, size);
 }
 
 void Node::update(double dt) {
@@ -28,10 +30,15 @@ void Node::update(double dt) {
       break;
     case DYING:
       fadeOut(dt);
+      collidable = false;
       break;
     case DEAD:
       break;
   };
+}
+
+bool Node::pulseReady() {
+  return pulseNode.ready;
 }
 
 void Node::collideWith(Entity* entity) {
@@ -40,7 +47,6 @@ void Node::collideWith(Entity* entity) {
       switch( ((Pulse*)entity)->pulseType) {
         case Pulse::ORIGIN:
           rocketNode.collideWith(entity);
-          pulseNode.collideWith(entity);
           break;
         case Pulse::DEFAULT:
           blimpNode.collideWith(entity);
@@ -73,8 +79,7 @@ void Node::draw() {
 
     // core
     ofPushStyle();
-      ofEnableAlphaBlending();
-      ofSetColor(color, 255.0 * fadeLevel);
+      ofSetColor(color, 255.0 * fadeLevel * 0.5);
       ofDrawCircle(0, 0, screenSize);
       ofSetColor(Entity::colors[0], 255.0 * fadeLevel);
       ofDrawCircle(0, 0, 0.75 * screenSize);
