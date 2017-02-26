@@ -1,4 +1,5 @@
 #include "blimp_node.h"
+#include "blimp.h"
 #include "projector.h"
 
 BlimpNode::BlimpNode() {
@@ -56,8 +57,16 @@ void BlimpNode::collisionAction() {
     collided = colliding;
     if (collided && ready) {
       coolDown = coolDownTime;
-      // spawn rockets
-      cout << "BLIMPS!" << endl;
+      // spawn blimps
+      for (size_t i = 0; i < numBlimps; i++) {
+        double angle = (double)i / (double)numBlimps;
+        angle += rotation / 360.0;
+        angle *= M_PI * 2;
+        ofPoint blimpPosition(cos(angle), sin(angle));
+        blimpPosition *= nodeSize;
+        blimpPosition += nodePosition;
+        Blimp::create(blimpPosition, angle);
+      }
     }
   }
 

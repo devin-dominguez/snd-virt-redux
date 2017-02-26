@@ -2,6 +2,9 @@
 #include "node.h"
 #include "projector.h"
 #include "depth_physics.h"
+#include "fake_height.h"
+#include "explosion.h"
+#include "trail.h"
 
 vector<Rocket> Rocket::collection;
 
@@ -16,10 +19,15 @@ Rocket::Rocket( ofPoint position, double angle) : Entity(position) {
   minSpeed = 8.0;
   allowedDownTime = 0.2;
 
-  initialSpeed = 150.0;
+  penetrationAngle = 0.0;
+
+  initialSpeed = 240.0;
 
   fadeInTime = 0.125;
   fadeOutTime = 0.25;
+
+  trailRate = 0.125;
+  trailTime = trailRate;
 
   type = ROCKET;
   color = Entity::colors[2];
@@ -48,6 +56,7 @@ void Rocket::update(double dt) {
       fadeOut(dt);
       if (penetrating) {
         move(dt);
+        penetrate();
       }
       collidable = false;;
       break;
@@ -65,6 +74,12 @@ void Rocket::move(double dt) {
     kill();
   }
 
+  trailTime -= dt;
+  if (trailTime <= 0.0) {
+    trailTime = trailRate;
+    RocketTrail::create(position);
+  }
+
   double sqrSpeed = (velocity.x * velocity.x) + (velocity.y * velocity.y);
   if (sqrSpeed <= minSpeed) {
     downTime += dt;
@@ -77,6 +92,9 @@ void Rocket::move(double dt) {
     kill();
   }
 
+  double z = FakeHeight::getHeightAt(position);
+  z *= z;
+  size = ofLerp(minSize, maxSize, z);
 }
 
 void Rocket::collideWith(Entity* entity) {
@@ -84,7 +102,9 @@ void Rocket::collideWith(Entity* entity) {
     case NODE:
       if (((Node*)entity)->pulseReady()) {
         penetrating = true;
-        penetrate();
+        fadeOutTime = 0.1;
+        ofVec2f deltaPosition = position - entity->getPosition();
+        penetrationAngle = atan2(deltaPosition.y, deltaPosition.x);
       } else {
         explode();
       }
@@ -96,11 +116,15 @@ void Rocket::collideWith(Entity* entity) {
 }
 
 void Rocket::explode() {
-  cout << "BLAM" << endl;
+  for (size_t i = 0; i < 16; i++) {
+    Debris::create(position);
+  }
 }
 
 void Rocket::penetrate() {
-  cout << "SPLAT" << endl;
+  for (size_t i = 0; i < 16; i++) {
+    Blood::create(position, penetrationAngle);
+  }
 }
 
 void Rocket::draw() {

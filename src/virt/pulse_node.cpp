@@ -48,6 +48,10 @@ void PulseNode::cooling(double dt) {
   }
 }
 
+double PulseNode::getNormalizedCoolDown() {
+  return coolDown / coolDownTime;
+}
+
 void PulseNode::collisionAction() {
   if (collided != colliding) {
     collided = colliding;

@@ -12,6 +12,8 @@ class PulseNode {
     void draw(double fadeLevel);
     bool ready;
 
+    double getNormalizedCoolDown();
+
   private:
     ofPoint nodePosition;
     double nodeSize;

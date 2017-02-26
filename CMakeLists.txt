@@ -24,6 +24,9 @@ set(SOURCES
     src/virt/pulse.cpp
     src/virt/virt.cpp
     src/virt/rocket.cpp
+    src/virt/blimp.cpp
+    src/virt/explosion.cpp
+    src/virt/trail.cpp
     src/virt/depth_physics.cpp
 
 )

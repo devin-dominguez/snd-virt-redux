@@ -3,23 +3,21 @@
 #include "entity.h"
 #include "depth_physics.h"
 
-class Rocket : public Entity {
+class Blimp : public Entity {
   public:
-    Rocket(ofPoint position, double angle);
+    Blimp(ofPoint position, double angle);
     static void create(ofPoint position, double anglge);
 
     void update(double dt);
     void draw();
     void collideWith(Entity* entity);
 
-    static vector<Rocket> collection;
+    static vector<Blimp> collection;
 
   private:
     DepthPhysics physics;
 
-    double trailRate;
-    double trailTime;
-
+    ofPoint previousPosition;
     double initialSpeed;
     double minSize;
     double maxSize;
@@ -29,12 +27,7 @@ class Rocket : public Entity {
     double angle;
     ofColor color;
 
-    double penetrationFadeOutTime;
-    double penetrationAngle;
-
-    bool penetrating;
-
     void move(double dt);
-    void penetrate();
     void explode();
 };
+

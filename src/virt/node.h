@@ -37,6 +37,12 @@ class Node : public Entity {
     PulseNode pulseNode;
     RocketNode rocketNode;
     BlimpNode blimpNode;
+    double pulsateAmpMin;
+    double pulsateAmpMax;
+    double pulsateFreqMin;
+    double pulsateFreqMax;
+    double pulsate;
+    double phasor;
 
     void action(double dt);
 
